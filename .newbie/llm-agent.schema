@@ -1,0 +1,45 @@
+// !! ------------------------------------------------------------ //
+// !!            [Microservice] LLM Agent models                   //
+// !! ------------------------------------------------------------ //
+// * Skill (Agent tools)                                           //
+// * LlmModel (AI Model configurations)                            //
+// * ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ ⌄ //
+
+enum LlmProvider {
+  qwen
+  openai
+  deepseek
+  claude
+
+  @@schema("microservice/llm-agent")
+}
+
+model LlmModel {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String       @unique // User-friendly name, e.g., "My GPT-4"
+  provider    LlmProvider  // Provider type: qwen, openai, deepseek, claude
+  model       String       // The actual model identifier, e.g., "gpt-4o", "deepseek-chat"
+  baseUrl     String   // The API base URL
+  apiKey      String   // The API key
+  version     String?  // Optional version (e.g., used by Claude)
+  isActive    Boolean  @default(false) // Only one should be active
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@schema("microservice/llm-agent")
+}
+
+model Skill {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String   @unique // The function name used by LLM
+  description     String   // The description of what the skill does
+  parameters      Json     // JSON schema of parameters
+  
+  isActive        Boolean  @default(true)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@schema("microservice/llm-agent")
+}
